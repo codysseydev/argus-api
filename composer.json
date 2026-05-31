@@ -1,0 +1,43 @@
+{
+    "name": "acme/queue-observability-api",
+    "description": "JSON HTTP API exposing the acme/argus queue-observability query service.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "acme/argus": "*",
+        "illuminate/contracts": "^13.0",
+        "illuminate/http": "^13.0",
+        "illuminate/routing": "^13.0",
+        "illuminate/support": "^13.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.0"
+    },
+    "repositories": [
+        { "type": "path", "url": "../queue-observability" }
+    ],
+    "autoload": {
+        "psr-4": { "ArgusApi\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "ArgusApi\\Tests\\": "tests/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ArgusApi\\ArgusApiServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}

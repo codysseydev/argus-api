@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use ArgusApi\Http\Controllers\AlertRules\CreateAlertRuleController;
+use ArgusApi\Http\Controllers\AlertRules\DeleteAlertRuleController;
+use ArgusApi\Http\Controllers\AlertRules\ListAlertRulesController;
+use ArgusApi\Http\Controllers\AlertRules\ListSavedSearchAlertRulesController;
+use ArgusApi\Http\Controllers\AlertRules\ShowAlertRuleController;
+use ArgusApi\Http\Controllers\AlertRules\UpdateAlertRuleController;
 use ArgusApi\Http\Controllers\FailureGroupController;
 use ArgusApi\Http\Controllers\JobHistoryController;
 use ArgusApi\Http\Controllers\SavedSearches\CreateSavedSearchController;
@@ -23,3 +29,11 @@ Route::get('saved-searches/{id}', ShowSavedSearchController::class)->name('argus
 Route::put('saved-searches/{id}', UpdateSavedSearchController::class)->name('argus-api.saved-searches.update');
 Route::delete('saved-searches/{id}', DeleteSavedSearchController::class)->name('argus-api.saved-searches.destroy');
 Route::get('saved-searches/{id}/results', SavedSearchResultsController::class)->name('argus-api.saved-searches.results');
+
+Route::get('saved-searches/{savedSearchId}/alert-rules', ListSavedSearchAlertRulesController::class)->name('argus-api.saved-searches.alert-rules.index');
+Route::post('saved-searches/{savedSearchId}/alert-rules', CreateAlertRuleController::class)->name('argus-api.saved-searches.alert-rules.store');
+
+Route::get('alert-rules', ListAlertRulesController::class)->name('argus-api.alert-rules.index');
+Route::get('alert-rules/{id}', ShowAlertRuleController::class)->name('argus-api.alert-rules.show');
+Route::put('alert-rules/{id}', UpdateAlertRuleController::class)->name('argus-api.alert-rules.update');
+Route::delete('alert-rules/{id}', DeleteAlertRuleController::class)->name('argus-api.alert-rules.destroy');

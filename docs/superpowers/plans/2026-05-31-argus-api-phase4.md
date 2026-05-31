@@ -980,7 +980,7 @@ declare(strict_types=1);
 
 namespace ArgusApi\Authorization;
 
-use Illuminate\Contracts\Auth\Access\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -1052,7 +1052,7 @@ declare(strict_types=1);
 namespace ArgusApi\Authorization;
 
 use ArgusApi\Exceptions\ForbiddenException;
-use Illuminate\Contracts\Auth\Access\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Gate;
 
 /**
@@ -2254,7 +2254,10 @@ final class SaveSearchRequest extends ApiFormRequest
     {
         return array_merge([
             'name' => ['required', 'string', 'max:255'],
-            'filter' => ['required', 'array'],
+            // 'present' not 'required': an empty (match-all) filter is a valid
+            // saved search, and 'required' would reject {} and also pre-empt the
+            // 404 path when updating an unknown id with an empty filter body.
+            'filter' => ['present', 'array'],
         ], FilterRules::prefixed('filter'));
     }
 }

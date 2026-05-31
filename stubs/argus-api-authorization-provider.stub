@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers;
+
+use ArgusApi\Authorization\Abilities;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Support\ServiceProvider;
+
+/**
+ * Published from acme/queue-observability-api. Register this in bootstrap/providers.php
+ * and edit each gate to match your app's roles. Because these definitions load,
+ * the package's permissive defaults are not used for these abilities.
+ */
+final class ArgusApiAuthorizationServiceProvider extends ServiceProvider
+{
+    public function boot(Gate $gate): void
+    {
+        $gate->define(Abilities::VIEW_JOBS, fn ($user) => true);
+        $gate->define(Abilities::VIEW_FAILURES, fn ($user) => true);
+        $gate->define(Abilities::MANAGE_SAVED_SEARCHES, fn ($user) => true);
+        $gate->define(Abilities::MANAGE_ALERTS, fn ($user) => true);
+    }
+}

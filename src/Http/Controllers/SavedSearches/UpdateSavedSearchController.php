@@ -6,6 +6,7 @@ namespace ArgusApi\Http\Controllers\SavedSearches;
 
 use Argus\SavedSearches\SavedSearchService;
 use ArgusApi\Authorization\Abilities;
+use ArgusApi\Authorization\ActingUser;
 use ArgusApi\Authorization\Authorize;
 use ArgusApi\Exceptions\NotFoundException;
 use ArgusApi\Http\Requests\SaveSearchRequest;
@@ -21,11 +22,12 @@ final readonly class UpdateSavedSearchController
         private SavedSearchService $service,
         private FilterInput $filter,
         private Gate $gate,
+        private ActingUser $actingUser,
     ) {}
 
     public function __invoke(SaveSearchRequest $request, string $id): JsonResponse
     {
-        Authorize::check($this->gate, $request->user(), Abilities::MANAGE_SAVED_SEARCHES);
+        Authorize::check($this->gate, $this->actingUser->resolve(), Abilities::MANAGE_SAVED_SEARCHES);
 
         if ($this->service->find($id) === null) {
             throw new NotFoundException("Unknown saved search [{$id}].");

@@ -6,6 +6,7 @@ namespace ArgusApi\Http\Controllers;
 
 use Argus\Query\JobQueryService;
 use ArgusApi\Authorization\Abilities;
+use ArgusApi\Authorization\ActingUser;
 use ArgusApi\Authorization\Authorize;
 use ArgusApi\Exceptions\NotFoundException;
 use ArgusApi\Http\Resources\TransitionRecordResource;
@@ -19,11 +20,12 @@ final readonly class JobHistoryController
     public function __construct(
         private JobQueryService $query,
         private Gate $gate,
+        private ActingUser $actingUser,
     ) {}
 
     public function __invoke(Request $request, string $jobUuid): JsonResponse
     {
-        Authorize::check($this->gate, $request->user(), Abilities::VIEW_JOBS);
+        Authorize::check($this->gate, $this->actingUser->resolve(), Abilities::VIEW_JOBS);
 
         $history = $this->query->getHistory($jobUuid);
 

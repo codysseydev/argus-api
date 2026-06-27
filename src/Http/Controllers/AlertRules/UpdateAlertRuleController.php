@@ -6,6 +6,7 @@ namespace ArgusApi\Http\Controllers\AlertRules;
 
 use Argus\Alerting\AlertService;
 use ArgusApi\Authorization\Abilities;
+use ArgusApi\Authorization\ActingUser;
 use ArgusApi\Authorization\Authorize;
 use ArgusApi\Exceptions\NotFoundException;
 use ArgusApi\Http\Requests\AlertRuleRequest;
@@ -19,11 +20,12 @@ final readonly class UpdateAlertRuleController
     public function __construct(
         private AlertService $service,
         private Gate $gate,
+        private ActingUser $actingUser,
     ) {}
 
     public function __invoke(AlertRuleRequest $request, string $id): JsonResponse
     {
-        Authorize::check($this->gate, $request->user(), Abilities::MANAGE_ALERTS);
+        Authorize::check($this->gate, $this->actingUser->resolve(), Abilities::MANAGE_ALERTS);
 
         $existing = $this->service->find($id);
         if ($existing === null) {

@@ -6,6 +6,7 @@ namespace ArgusApi\Http\Controllers\SavedSearches;
 
 use Argus\SavedSearches\SavedSearchService;
 use ArgusApi\Authorization\Abilities;
+use ArgusApi\Authorization\ActingUser;
 use ArgusApi\Authorization\Authorize;
 use ArgusApi\Http\Requests\SaveSearchRequest;
 use ArgusApi\Http\Resources\SavedSearchResource;
@@ -20,11 +21,12 @@ final readonly class CreateSavedSearchController
         private SavedSearchService $service,
         private FilterInput $filter,
         private Gate $gate,
+        private ActingUser $actingUser,
     ) {}
 
     public function __invoke(SaveSearchRequest $request): JsonResponse
     {
-        Authorize::check($this->gate, $request->user(), Abilities::MANAGE_SAVED_SEARCHES);
+        Authorize::check($this->gate, $this->actingUser->resolve(), Abilities::MANAGE_SAVED_SEARCHES);
 
         $validated = $request->validated();
         $saved = $this->service->create($validated['name'], $this->filter->fromValidated($validated['filter']));

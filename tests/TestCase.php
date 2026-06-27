@@ -36,8 +36,10 @@ abstract class TestCase extends Orchestra
         $app['config']->set('argus.schedule.enabled', false);
         $app['config']->set('argus.alerting.enabled', false);
 
-        // Default the API to no auth middleware so endpoint tests exercise the
-        // controllers directly; auth-specific tests override this per test.
+        // Default the API to no auth so endpoint tests exercise controllers
+        // directly. Setting guard to null suppresses the derived auth middleware;
+        // auth-specific tests override both values as needed.
+        $app['config']->set('argus-api.guard', null);
         $app['config']->set('argus-api.middleware', []);
     }
 

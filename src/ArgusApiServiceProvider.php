@@ -34,9 +34,18 @@ final class ArgusApiServiceProvider extends ServiceProvider
     {
         Route::group([
             'prefix' => config('argus-api.prefix', 'argus-api'),
-            'middleware' => config('argus-api.middleware', ['auth:sanctum']),
+            'middleware' => $this->routeMiddleware(),
         ], function (): void {
             require __DIR__.'/../routes/argus-api.php';
         });
+    }
+
+    /** @return list<string> */
+    private function routeMiddleware(): array
+    {
+        $support = array_values((array) config('argus-api.middleware', []));
+        $guards = array_values(array_filter(array_map('trim', (array) config('argus-api.guard'))));
+
+        return $guards === [] ? $support : [...$support, 'auth:'.implode(',', $guards)];
     }
 }

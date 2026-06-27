@@ -6,6 +6,7 @@ namespace ArgusApi\Http\Controllers\AlertRules;
 
 use Argus\Alerting\AlertService;
 use ArgusApi\Authorization\Abilities;
+use ArgusApi\Authorization\ActingUser;
 use ArgusApi\Authorization\Authorize;
 use ArgusApi\Http\Resources\AlertRuleResource;
 use ArgusApi\Http\Support\ApiResponse;
@@ -18,11 +19,12 @@ final readonly class ListAlertRulesController
     public function __construct(
         private AlertService $service,
         private Gate $gate,
+        private ActingUser $actingUser,
     ) {}
 
     public function __invoke(Request $request): JsonResponse
     {
-        Authorize::check($this->gate, $request->user(), Abilities::MANAGE_ALERTS);
+        Authorize::check($this->gate, $this->actingUser->resolve(), Abilities::MANAGE_ALERTS);
 
         $all = $this->service->all();
 

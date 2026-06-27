@@ -6,10 +6,16 @@ return [
     // URL prefix all Argus API routes mount under.
     'prefix' => 'argus-api',
 
-    // The authentication seam. Authentication is the consuming app's job; this
-    // package only declares the stack its routes sit behind. Defaults to
-    // Sanctum's stateful guard. Replace with the app's own guard(s) as needed.
-    'middleware' => ['auth:sanctum'],
+    // The guard (or list of guards) to authenticate against. The package derives
+    // 'auth:<guard>' middleware from this value and appends it to 'middleware'
+    // automatically. Accepts a string or an array of guard names. Set to null
+    // to disable guard derivation and take full manual control via 'middleware'.
+    'guard' => env('ARGUS_API_GUARD', 'sanctum'),
+
+    // Supporting middleware stack (session, CSRF, throttle, etc.). The auth
+    // middleware is derived from 'guard' and appended automatically. Setting
+    // 'guard' to null hands full manual control back to this stack.
+    'middleware' => [],
 
     'pagination' => [
         'default_limit' => 100,

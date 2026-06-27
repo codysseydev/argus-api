@@ -13,9 +13,10 @@ final class UnauthenticatedTest extends TestCase
     {
         parent::defineEnvironment($app);
 
-        // Simulate the consuming app plugging its own auth guard into the seam.
-        // 'auth' uses the default web guard, so no extra package is needed; a
-        // guest hitting a JSON route is rejected with 401 before any controller.
+        // Null guard hands full manual control back to middleware. Setting the
+        // web 'auth' middleware here exercises the unauthenticated path without
+        // requiring Sanctum; a guest hitting a JSON route is rejected with 401.
+        $app['config']->set('argus-api.guard', null);
         $app['config']->set('argus-api.middleware', ['auth']);
     }
 

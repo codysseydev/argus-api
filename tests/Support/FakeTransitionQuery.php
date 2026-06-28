@@ -9,6 +9,7 @@ use Argus\Query\FailureGroup;
 use Argus\Query\JobFilter;
 use Argus\Query\JobSummary;
 use Argus\Query\TransitionRecord;
+use Carbon\CarbonImmutable;
 
 /**
  * In-memory TransitionQuery for tests. Applies the JobFilter predicates so the
@@ -29,6 +30,17 @@ final class FakeTransitionQuery implements TransitionQuery
     public array $failureGroups = [];
 
     public ?JobFilter $lastFilter = null;
+
+    /**
+     * Alerting aggregates the core computes against storage. The API never calls
+     * these (it only proxies the read endpoints), but the contract requires them,
+     * so they return test-controllable defaults and record the filter received.
+     */
+    public float $failureRateValue = 0.0;
+
+    public int $stuckCount = 0;
+
+    public ?float $latencyMs = null;
 
     public function search(JobFilter $filter): array
     {
@@ -81,6 +93,27 @@ final class FakeTransitionQuery implements TransitionQuery
 
             return true;
         }));
+    }
+
+    public function failureRate(JobFilter $filter): float
+    {
+        $this->lastFilter = $filter;
+
+        return $this->failureRateValue;
+    }
+
+    public function countStuck(JobFilter $filter, CarbonImmutable $stuckBefore): int
+    {
+        $this->lastFilter = $filter;
+
+        return $this->stuckCount;
+    }
+
+    public function latencyPercentile(JobFilter $filter, float $percentile): ?float
+    {
+        $this->lastFilter = $filter;
+
+        return $this->latencyMs;
     }
 
     private function matches(JobSummary $s, JobFilter $f): bool

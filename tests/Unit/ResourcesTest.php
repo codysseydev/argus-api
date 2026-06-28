@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ArgusApi\Tests\Unit;
 
+use Argus\Alerting\AlertComparison;
+use Argus\Alerting\AlertConditionType;
 use Argus\Alerting\AlertRule;
 use Argus\Alerting\AlertState;
 use Argus\Query\FailureGroup;
@@ -93,7 +95,7 @@ final class ResourcesTest extends TestCase
     public function alert_rule_renders_state_and_sinks(): void
     {
         $now = CarbonImmutable::parse('2026-05-01T10:00:00+00:00');
-        $rule = new AlertRule('5', '7', 'High failures', 10, 300, 600, ['slack'], true, AlertState::OK, null, null, null, $now, $now);
+        $rule = new AlertRule('5', '7', 'High failures', 10, AlertConditionType::COUNT, AlertComparison::GREATER_THAN, null, 300, 600, ['slack'], true, AlertState::OK, null, null, null, $now, $now);
 
         $array = AlertRuleResource::toArray($rule);
 

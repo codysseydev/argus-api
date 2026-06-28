@@ -15,6 +15,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
 
+    # Required for softprops/action-gh-release to create the GitHub Release;
+    # the default GITHUB_TOKEN is read-only.
+    permissions:
+      contents: write
+
     services:
       redis:
         image: redis:7

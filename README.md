@@ -1,14 +1,19 @@
-# Queue Observability API (`acme/queue-observability-api`)
+# Argus API (`codysseydev/argus-api`)
 
-A JSON HTTP API over the [`acme/argus`](../queue-observability) queue-observability
+[![Packagist Version](https://img.shields.io/packagist/v/codysseydev/argus-api)](https://packagist.org/packages/codysseydev/argus-api)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/codysseydev/argus-api)](https://packagist.org/packages/codysseydev/argus-api)
+[![License](https://img.shields.io/packagist/l/codysseydev/argus-api)](LICENSE)
+[![Tests](https://github.com/codysseydev/argus-api/actions/workflows/tests.yml/badge.svg)](https://github.com/codysseydev/argus-api/actions/workflows/tests.yml)
+
+A JSON HTTP API over the [`codysseydev/argus`](../argus) queue-observability
 core. It exposes the core's read and management services and nothing else: it holds
 no storage knowledge, emits no SQL, and never touches a database. Dependency
-direction is one way: `React client -> this API -> acme/argus -> storage`.
+direction is one way: `React client -> this API -> codysseydev/argus -> storage`.
 
 ## Installation
 
 ```bash
-composer require acme/queue-observability-api
+composer require codysseydev/argus-api
 php artisan vendor:publish --tag=argus-api-config
 ```
 
@@ -191,10 +196,23 @@ export interface ApiError { error: { type: string; message: string; details: Rec
 ## Development
 
 ```bash
-composer install   # resolves acme/argus via the local path repository
+composer install
 ./vendor/bin/phpunit
 ./vendor/bin/pint
 ```
 
-Tests run against in-memory fakes bound at the core's storage contracts; no
-Postgres or Redis is required.
+Tests use in-memory fakes for all storage contracts, so no database is required.
+A running Redis is required because `ArgusServiceProvider` opens a Redis buffer
+connection at boot.
+
+To develop against an unreleased local checkout of the core, wire a path
+repository temporarily (do not commit this change):
+
+```bash
+composer config repositories.argus path ../argus
+composer update codysseydev/argus
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [RELEASING.md](RELEASING.md) for full
+details. Related packages: [`codysseydev/argus`](../argus) (core),
+[`codysseydev/argus-ui`](../argus-ui) (React UI).

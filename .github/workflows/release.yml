@@ -1,0 +1,66 @@
+name: Release
+
+# Runs when a version tag is pushed. Packagist auto-updates via the GitHub
+# webhook once the release is created here.
+#
+# IMPORTANT: codysseydev/argus must be tagged and published on Packagist BEFORE
+# pushing a tag here. See RELEASING.md for the full release-ordering checklist.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      REDIS_HOST: 127.0.0.1
+
+    steps:
+      - name: Checkout argus-api
+        uses: actions/checkout@v4
+
+      # NOTE: This step requires codysseydev/argus to be a public repository.
+      # Once the core is reliably on Packagist with a stable ^1.0 release,
+      # this checkout and the path-repo config step below can be removed and
+      # replaced with a plain `composer install`.
+      - name: Checkout core (codysseydev/argus) as sibling
+        uses: actions/checkout@v4
+        with:
+          repository: codysseydev/argus
+          path: argus-core
+          ref: main
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: redis, pdo_pgsql, pdo_mysql, pcntl
+          coverage: none
+
+      - name: Configure path repository for core
+        run: composer config repositories.argus path ./argus-core
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true

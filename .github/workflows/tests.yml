@@ -1,0 +1,71 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.5']
+        testbench: ['^10', '^11']
+
+    # Redis is required: ArgusServiceProvider opens a Redis buffer connection at
+    # boot even in test mode. The test suite itself uses in-memory fakes for all
+    # storage contracts, so no database service is needed.
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      REDIS_HOST: 127.0.0.1
+
+    steps:
+      - name: Checkout argus-api
+        uses: actions/checkout@v4
+
+      # NOTE: This step requires codysseydev/argus to be a public repository.
+      # Once the core is on Packagist (^1.0), replace this checkout + path-repo
+      # approach with a plain `composer install`.
+      - name: Checkout core (codysseydev/argus) as sibling
+        uses: actions/checkout@v4
+        with:
+          repository: codysseydev/argus
+          path: argus-core
+          ref: main
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: redis, pdo_pgsql, pdo_mysql, pcntl
+          coverage: none
+
+      # Wire the local core checkout as a path repository so Composer resolves it
+      # instead of fetching from Packagist (which may not have v1.0 yet).
+      - name: Configure path repository for core
+        run: composer config repositories.argus path ./argus-core
+
+      # Pin testbench to the matrix version before the full update, so Composer
+      # picks the right Testbench + Laravel combination in one pass.
+      - name: Pin testbench version
+        env:
+          TESTBENCH_VERSION: ${{ matrix.testbench }}
+        run: composer require --dev "orchestra/testbench:${TESTBENCH_VERSION}" --no-update
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: vendor/bin/phpunit

@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       # NOTE: This step requires codysseydev/argus to be a public repository.
-      # Once the core is reliably on Packagist with a stable ^1.0 release,
+      # Once the core is reliably on Packagist with a stable ^0.1 release,
       # this checkout and the path-repo config step below can be removed and
       # replaced with a plain `composer install`.
       - name: Checkout core (codysseydev/argus) as sibling

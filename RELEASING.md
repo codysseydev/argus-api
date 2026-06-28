@@ -5,7 +5,7 @@
 **The core package `codysseydev/argus` MUST be tagged and available on Packagist
 BEFORE tagging this package.**
 
-This package's `composer.json` declares `"codysseydev/argus": "^1.0"`. If the core
+This package's `composer.json` declares `"codysseydev/argus": "^0.1"`. If the core
 is not yet on Packagist, `composer install` will fail for anyone installing
 `codysseydev/argus-api`, including CI. Tag and publish the core first, confirm the
 Packagist listing is live, then proceed here.

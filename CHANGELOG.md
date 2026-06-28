@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-06-28
+## [0.1.0] - 2026-06-28
 
 ### Added
 
@@ -30,5 +30,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Published config (`argus-api-config`) and authorization stub
   (`argus-api-authorization`).
 
-[Unreleased]: https://github.com/codysseydev/argus-api/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/codysseydev/argus-api/releases/tag/v1.0.0
+[Unreleased]: https://github.com/codysseydev/argus-api/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/codysseydev/argus-api/releases/tag/v0.1.0

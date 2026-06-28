@@ -15,7 +15,7 @@ jobs:
       # NOTE: This step requires codysseydev/argus to be a public repository.
       # The same path-repo approach as tests.yml is used so `composer install`
       # resolves the core dependency without requiring a Packagist release.
-      # Once codysseydev/argus is on Packagist (^1.0) this checkout and the
+      # Once codysseydev/argus is on Packagist (^0.1) this checkout and the
       # path-repo config step below can both be removed.
       - name: Checkout core (codysseydev/argus) as sibling
         uses: actions/checkout@v4

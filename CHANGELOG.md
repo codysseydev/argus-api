@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `GET /alert-firings` endpoint returning recent alert firings across every rule.
+- `GET /alert-rules/{id}/firings` endpoint returning the firing history for a single rule.
+- `AlertFiringResource` serialising the append-only firing log (observed value, threshold, window, fired-at).
+- Alert-rule condition fields exposed over HTTP: `conditionType` (count, failure_rate, stuck_count, latency_p95), `comparison` (gt, lt), and `stuckSeconds`. Returned by `AlertRuleResource`, validated by `AlertRuleRequest`, and applied by the create/update controllers.
+- `docs/api.md`: full HTTP endpoint reference, linked from the README.
+
+### Changed
+
+- `stuckSeconds` is now required when an alert rule's condition is `stuck_count`, and rejected for any other condition.
+
 ## [0.1.0] - 2026-06-28
 
 ### Added

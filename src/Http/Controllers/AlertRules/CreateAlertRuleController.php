@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ArgusApi\Http\Controllers\AlertRules;
 
+use Argus\Alerting\AlertComparison;
+use Argus\Alerting\AlertConditionType;
 use Argus\Alerting\AlertService;
 use Argus\SavedSearches\SavedSearchService;
 use ArgusApi\Authorization\Abilities;
@@ -42,6 +44,9 @@ final readonly class CreateAlertRuleController
             (int) $v['cooldownSeconds'],
             $v['sinks'],
             $v['enabled'] ?? true,
+            isset($v['conditionType']) ? AlertConditionType::from($v['conditionType']) : AlertConditionType::COUNT,
+            isset($v['comparison']) ? AlertComparison::from($v['comparison']) : AlertComparison::GREATER_THAN,
+            isset($v['stuckSeconds']) ? (int) $v['stuckSeconds'] : null,
         );
 
         return ApiResponse::created(AlertRuleResource::toArray($rule));

@@ -54,6 +54,8 @@ Lists are always arrays; an empty result is `data: []` with `200`.
 
 ## Endpoints
 
+Full reference: [docs/api.md](docs/api.md).
+
 All paths are relative to the configured prefix (default `argus-api`).
 
 ### `POST /search` (gate: `view-jobs`)

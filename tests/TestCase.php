@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace ArgusApi\Tests;
 
 use Argus\ArgusServiceProvider;
+use Argus\Contracts\AlertFiringStore;
 use Argus\Contracts\AlertRuleStore;
 use Argus\Contracts\SavedSearchStore;
 use Argus\Contracts\TransitionQuery;
 use ArgusApi\ArgusApiServiceProvider;
+use ArgusApi\Tests\Support\FakeAlertFiringStore;
 use ArgusApi\Tests\Support\FakeAlertRuleStore;
 use ArgusApi\Tests\Support\FakeSavedSearchStore;
 use ArgusApi\Tests\Support\FakeTransitionQuery;
@@ -22,6 +24,8 @@ abstract class TestCase extends Orchestra
     protected FakeSavedSearchStore $savedSearches;
 
     protected FakeAlertRuleStore $alertRules;
+
+    protected FakeAlertFiringStore $alertFirings;
 
     protected function getPackageProviders($app): array
     {
@@ -50,10 +54,12 @@ abstract class TestCase extends Orchestra
         $this->transitions = new FakeTransitionQuery;
         $this->savedSearches = new FakeSavedSearchStore;
         $this->alertRules = new FakeAlertRuleStore;
+        $this->alertFirings = new FakeAlertFiringStore;
 
         $this->app->instance(TransitionQuery::class, $this->transitions);
         $this->app->instance(SavedSearchStore::class, $this->savedSearches);
         $this->app->instance(AlertRuleStore::class, $this->alertRules);
+        $this->app->instance(AlertFiringStore::class, $this->alertFirings);
     }
 
     protected function actingAsUser(): static

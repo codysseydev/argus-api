@@ -39,5 +39,7 @@ final class AuthorizationTest extends TestCase
         $this->actingAsUser()->postJson('argus-api/failures', [])->assertStatus(403);
         $this->actingAsUser()->getJson('argus-api/saved-searches')->assertStatus(403);
         $this->actingAsUser()->getJson('argus-api/alert-rules')->assertStatus(403);
+        $this->actingAsUser()->getJson('argus-api/alert-firings')->assertStatus(403);
+        $this->actingAsUser()->getJson('argus-api/alert-rules/1/firings')->assertStatus(403);
     }
 }

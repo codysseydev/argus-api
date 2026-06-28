@@ -5,6 +5,11 @@ name: Release
 #
 # IMPORTANT: codysseydev/argus must be tagged and published on Packagist BEFORE
 # pushing a tag here. See RELEASING.md for the full release-ordering checklist.
+#
+# The test and release jobs are deliberately separate: `test` checks out an
+# external repository (the core) and runs Composer/PHPUnit, so it runs with the
+# default read-only token. Only `release` holds `contents: write`, and it runs
+# no external code: it just creates the GitHub Release after `test` passes.
 
 on:
   push:
@@ -12,13 +17,8 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
-
-    # Required for softprops/action-gh-release to create the GitHub Release;
-    # the default GITHUB_TOKEN is read-only.
-    permissions:
-      contents: write
 
     services:
       redis:
@@ -71,6 +71,16 @@ jobs:
       - name: Run tests
         run: vendor/bin/phpunit
 
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+
+    # The only job with write access. It runs no external/untrusted code; it
+    # only creates the GitHub Release for the pushed tag.
+    permissions:
+      contents: write
+
+    steps:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

@@ -12,33 +12,12 @@ jobs:
       - name: Checkout argus-api
         uses: actions/checkout@v4
 
-      # NOTE: This step requires codysseydev/argus to be a public repository.
-      # The same path-repo approach as tests.yml is used so `composer install`
-      # resolves the core dependency without requiring a Packagist release.
-      # Once codysseydev/argus is on Packagist (^0.1) this checkout and the
-      # path-repo config step below can both be removed.
-      - name: Checkout core (codysseydev/argus) as sibling
-        uses: actions/checkout@v4
-        with:
-          repository: codysseydev/argus
-          path: argus-core
-          ref: main
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           extensions: redis, pcntl
           coverage: none
-
-      - name: Configure path repository for core
-        run: composer config repositories.argus path ./argus-core
-
-      # The path repo exposes the core as dev-main, which a stable ^0.1 constraint
-      # rejects. Alias it to 0.1.0 so resolution succeeds before the core is on
-      # Packagist. Remove together with the path-repo steps once it is published.
-      - name: Alias path-linked core to satisfy the constraint
-        run: composer require "codysseydev/argus:dev-main as 0.1.0" --no-update
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction

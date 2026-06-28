@@ -3,13 +3,12 @@ name: Release
 # Runs when a version tag is pushed. Packagist auto-updates via the GitHub
 # webhook once the release is created here.
 #
-# IMPORTANT: codysseydev/argus must be tagged and published on Packagist BEFORE
-# pushing a tag here. See RELEASING.md for the full release-ordering checklist.
+# IMPORTANT: a matching core release of codysseydev/argus must already be on
+# Packagist so this package's ^0.1 dependency resolves. See RELEASING.md.
 #
-# The test and release jobs are deliberately separate: `test` checks out an
-# external repository (the core) and runs Composer/PHPUnit, so it runs with the
-# default read-only token. Only `release` holds `contents: write`, and it runs
-# no external code: it just creates the GitHub Release after `test` passes.
+# The test and release jobs are deliberately separate: only `release` holds
+# `contents: write`, and it runs no project code: it just creates the GitHub
+# Release after `test` passes.
 
 on:
   push:
@@ -38,32 +37,12 @@ jobs:
       - name: Checkout argus-api
         uses: actions/checkout@v4
 
-      # NOTE: This step requires codysseydev/argus to be a public repository.
-      # Once the core is reliably on Packagist with a stable ^0.1 release,
-      # this checkout and the path-repo config step below can be removed and
-      # replaced with a plain `composer install`.
-      - name: Checkout core (codysseydev/argus) as sibling
-        uses: actions/checkout@v4
-        with:
-          repository: codysseydev/argus
-          path: argus-core
-          ref: main
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: redis, pdo_pgsql, pdo_mysql, pcntl
+          extensions: redis, pcntl
           coverage: none
-
-      - name: Configure path repository for core
-        run: composer config repositories.argus path ./argus-core
-
-      # The path repo exposes the core as dev-main, which a stable ^0.1 constraint
-      # rejects. Alias it to 0.1.0 so resolution succeeds before the core is on
-      # Packagist. Remove together with the path-repo steps once it is published.
-      - name: Alias path-linked core to satisfy the constraint
-        run: composer require "codysseydev/argus:dev-main as 0.1.0" --no-update
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction
@@ -75,8 +54,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
 
-    # The only job with write access. It runs no external/untrusted code; it
-    # only creates the GitHub Release for the pushed tag.
+    # The only job with write access. It runs no project code; it only creates
+    # the GitHub Release for the pushed tag.
     permissions:
       contents: write
 

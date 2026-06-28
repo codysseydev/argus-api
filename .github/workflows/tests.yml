@@ -57,6 +57,12 @@ jobs:
       - name: Configure path repository for core
         run: composer config repositories.argus path ./argus-core
 
+      # The path repo exposes the core as dev-main, which a stable ^0.1 constraint
+      # rejects. Alias it to 0.1.0 so resolution succeeds before the core is on
+      # Packagist. Remove together with the path-repo steps once it is published.
+      - name: Alias path-linked core to satisfy the constraint
+        run: composer require "codysseydev/argus:dev-main as 0.1.0" --no-update
+
       # Pin testbench to the matrix version before the full update, so Composer
       # picks the right Testbench + Laravel combination in one pass.
       - name: Pin testbench version
